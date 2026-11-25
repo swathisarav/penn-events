@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Penn Grad Events — Today on Campus</title>
+  <meta name="description" content="Today's grad student events at Penn, on a 3D campus map.">
+  <link rel="icon" href="assets/penn-shield-simple.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+  <link href="style.css?v=2026-11-25h" rel="stylesheet">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img class="brand-mark" src="assets/penn-shield-simple.svg" alt="University of Pennsylvania shield">
+      <div>
+        <h1>PENN / GRAD EVENTS</h1>
+        <p class="sub">FIG. 01 — CAMPUS + PENNOVATION · WIREFRAME EDITION</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="clock" id="clock">--:--</div>
+      <div class="updated" id="updated">loading data…</div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar" aria-label="Event list">
+      <nav class="days" id="days" aria-label="Choose a day"></nav>
+      <div class="filters" id="filters" role="group" aria-label="Filters">
+        <button class="chip" data-filter="map" aria-pressed="false">ON MAP</button>
+        <button class="chip" data-filter="free" aria-pressed="false" title="Hides only events the sheet marks as paid">FREE</button>
+        <button class="chip" data-filter="food" aria-pressed="false">FOOD</button>
+      </div>
+      <div class="count" id="count"></div>
+      <div class="list" id="list"></div>
+      <footer class="side-foot">
+        <strong>Unofficial</strong> · not affiliated with the University of Pennsylvania<br>
+        Built from a daily sheet · personal details removed ·
+        map © <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a>
+        <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OSM</a>
+      </footer>
+    </aside>
+
+    <section class="map-wrap" aria-label="Campus map">
+      <div id="map"></div>
+      <div class="map-hud tl">
+        <div class="hud-title">[ VIEW ]</div>
+        <div class="seg">
+          <button data-view="campus" class="on">CAMPUS</button>
+          <button data-view="pennovation">PENNOVATION</button>
+          <button data-view="all">BOTH</button>
+        </div>
+        <button class="hud-btn" id="toggle3d">3D ✓</button>
+      </div>
+      <div class="map-hud bl" id="coords">LAT —  LNG —</div>
+      <div class="map-hud br legend">
+        <span><i class="lg-pin"></i> event</span>
+        <span><i class="lg-now"></i> happening now</span>
+        <span><i class="lg-past"></i> ended</span>
+      </div>
+      <div class="corner c1"></div><div class="corner c2"></div>
+      <div class="corner c3"></div><div class="corner c4"></div>
+    </section>
+  </main>
+
+  <dialog class="modal" id="modal" aria-labelledby="m-title">
+    <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+    <div class="modal-grid">
+      <div class="modal-poster" id="m-poster"></div>
+      <div class="modal-body" id="m-body"></div>
+    </div>
+  </dialog>
+
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="app.js?v=2026-11-25h"></script>
+</body>
+</html>

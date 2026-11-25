@@ -1,0 +1,390 @@
+{
+  "buildings": [
+    {
+      "name": "Towne Building",
+      "match": [
+        "raisler",
+        "towne"
+      ],
+      "lat": 39.95186,
+      "lng": -75.19093,
+      "color": "#a4553f",
+      "kind": "building"
+    },
+    {
+      "name": "Levine Hall",
+      "match": [
+        "levine",
+        "wu and chen"
+      ],
+      "lat": 39.95219,
+      "lng": -75.19109,
+      "color": "#7f9fb0",
+      "kind": "building"
+    },
+    {
+      "name": "Moore Building",
+      "match": [
+        "moore"
+      ],
+      "lat": 39.9524,
+      "lng": -75.19049,
+      "color": "#a85a42",
+      "kind": "building"
+    },
+    {
+      "name": "Skirkanich Hall",
+      "match": [
+        "skirkanich"
+      ],
+      "lat": 39.95206,
+      "lng": -75.19051,
+      "color": "#7d9a4a",
+      "kind": "building"
+    },
+    {
+      "name": "Singh Center for Nanotechnology",
+      "match": [
+        "singh",
+        "glandt"
+      ],
+      "lat": 39.95281,
+      "lng": -75.18879,
+      "color": "#94b4c4",
+      "kind": "building"
+    },
+    {
+      "name": "Amy Gutmann Hall",
+      "match": [
+        "gutmann"
+      ],
+      "lat": 39.9545,
+      "lng": -75.19118,
+      "color": "#c49a6c",
+      "kind": "building"
+    },
+    {
+      "name": "David Rittenhouse Lab",
+      "match": [
+        "rittenhouse lab",
+        "david rittenhouse",
+        "drl"
+      ],
+      "lat": 39.95217,
+      "lng": -75.1893,
+      "color": "#b3866a",
+      "kind": "building"
+    },
+    {
+      "name": "The Palestra",
+      "match": [
+        "palestra"
+      ],
+      "lat": 39.9514,
+      "lng": -75.18864,
+      "color": "#9c5540",
+      "kind": "building"
+    },
+    {
+      "name": "Franklin Field",
+      "match": [
+        "franklin field"
+      ],
+      "lat": 39.95007,
+      "lng": -75.18997,
+      "color": "#a3503c",
+      "kind": "building"
+    },
+    {
+      "name": "Fisher-Bennett Hall",
+      "match": [
+        "fisher bennett",
+        "fisher-bennett",
+        "3340 walnut"
+      ],
+      "lat": 39.95245,
+      "lng": -75.19187,
+      "color": "#a35a45",
+      "kind": "building"
+    },
+    {
+      "name": "Arthur Ross Gallery",
+      "match": [
+        "arthur ross",
+        "fisher fine arts"
+      ],
+      "lat": 39.9516,
+      "lng": -75.19272,
+      "color": "#b04a33",
+      "kind": "building"
+    },
+    {
+      "name": "Meyerson Hall",
+      "match": [
+        "meyerson"
+      ],
+      "lat": 39.95222,
+      "lng": -75.19266,
+      "color": "#b5ada0",
+      "kind": "building"
+    },
+    {
+      "name": "Van Pelt Library",
+      "match": [
+        "van pelt"
+      ],
+      "lat": 39.95271,
+      "lng": -75.19393,
+      "color": "#a77a62",
+      "kind": "building"
+    },
+    {
+      "name": "College Hall",
+      "match": [
+        "college hall"
+      ],
+      "lat": 39.9515,
+      "lng": -75.19376,
+      "color": "#7f8f68",
+      "kind": "building"
+    },
+    {
+      "name": "Houston Hall",
+      "match": [
+        "houston hall"
+      ],
+      "lat": 39.95094,
+      "lng": -75.19388,
+      "color": "#8f8b70",
+      "kind": "building"
+    },
+    {
+      "name": "Irvine Auditorium",
+      "match": [
+        "irvine"
+      ],
+      "lat": 39.95091,
+      "lng": -75.19299,
+      "color": "#a04b3a",
+      "kind": "building"
+    },
+    {
+      "name": "Penn Law",
+      "match": [
+        "penn law",
+        "silverman",
+        "carey law",
+        "3501 sansom"
+      ],
+      "lat": 39.95402,
+      "lng": -75.19225,
+      "color": "#a65b46",
+      "kind": "building"
+    },
+    {
+      "name": "Penn Museum",
+      "match": [
+        "penn museum",
+        "3260 south"
+      ],
+      "lat": 39.94929,
+      "lng": -75.19203,
+      "color": "#bd6a42",
+      "kind": "building"
+    },
+    {
+      "name": "John Morgan Building",
+      "match": [
+        "john morgan",
+        "class of 62",
+        "class of '62"
+      ],
+      "lat": 39.94985,
+      "lng": -75.1957,
+      "color": "#9e5a45",
+      "kind": "building"
+    },
+    {
+      "name": "Biomedical Research Building",
+      "match": [
+        "kelley research",
+        "krb",
+        "biomedical research",
+        "brb"
+      ],
+      "lat": 39.94803,
+      "lng": -75.19651,
+      "color": "#a2b0b6",
+      "kind": "building"
+    },
+    {
+      "name": "Grad Student Center",
+      "match": [
+        "grad center",
+        "graduate student center",
+        "3615 locust"
+      ],
+      "lat": 39.95234,
+      "lng": -75.19566,
+      "color": "#a5604a",
+      "kind": "building"
+    },
+    {
+      "name": "ARCH",
+      "match": [
+        "arch building",
+        "3601 locust",
+        "paach",
+        "la casa latina",
+        "makuu"
+      ],
+      "lat": 39.95234,
+      "lng": -75.19521,
+      "color": "#b47257",
+      "kind": "building"
+    },
+    {
+      "name": "Steinberg-Dietrich Hall",
+      "match": [
+        "steinberg",
+        "dietrich"
+      ],
+      "lat": 39.95183,
+      "lng": -75.19619,
+      "color": "#9c5a46",
+      "kind": "building"
+    },
+    {
+      "name": "Penn Women's Center",
+      "match": [
+        "women's center",
+        "3643 locust"
+      ],
+      "lat": 39.95242,
+      "lng": -75.19678,
+      "color": "#a86450",
+      "kind": "building"
+    },
+    {
+      "name": "Annenberg Center",
+      "match": [
+        "annenberg center"
+      ],
+      "lat": 39.9533,
+      "lng": -75.1958,
+      "color": "#a8a39a",
+      "kind": "building"
+    },
+    {
+      "name": "Penn Bookstore",
+      "match": [
+        "bookstore",
+        "3601 walnut"
+      ],
+      "lat": 39.95338,
+      "lng": -75.19507,
+      "color": "#97705c",
+      "kind": "building"
+    },
+    {
+      "name": "PCPSE",
+      "match": [
+        "pcpse",
+        "political science and economics",
+        "133 s 36th"
+      ],
+      "lat": 39.95341,
+      "lng": -75.19452,
+      "color": "#c8b48f",
+      "kind": "building"
+    },
+    {
+      "name": "Huntsman Hall",
+      "match": [
+        "huntsman"
+      ],
+      "lat": 39.95297,
+      "lng": -75.19822,
+      "color": "#a2533f",
+      "kind": "building"
+    },
+    {
+      "name": "Pottruck Center",
+      "match": [
+        "pottruck"
+      ],
+      "lat": 39.9539,
+      "lng": -75.19712,
+      "color": "#8ea4ae",
+      "kind": "building"
+    },
+    {
+      "name": "Tangen Hall",
+      "match": [
+        "tangen",
+        "venture lab",
+        "3801 walnut"
+      ],
+      "lat": 39.95503,
+      "lng": -75.20211,
+      "color": "#8d6e5e",
+      "kind": "building"
+    },
+    {
+      "name": "Perry World House",
+      "match": [
+        "perry world house",
+        "pwh"
+      ],
+      "lat": 39.95288,
+      "lng": -75.19925,
+      "color": "#a96a52",
+      "kind": "building"
+    },
+    {
+      "name": "3935 Walnut St",
+      "match": [
+        "3935 walnut"
+      ],
+      "lat": 39.95441,
+      "lng": -75.20233,
+      "color": "#9aa6ad",
+      "kind": "building"
+    },
+    {
+      "name": "Sang Kee Noodle House",
+      "match": [
+        "sang kee",
+        "3549 chestnut"
+      ],
+      "lat": 39.955,
+      "lng": -75.194,
+      "color": "#b06a4f",
+      "kind": "building"
+    },
+    {
+      "name": "Penn Park",
+      "match": [
+        "penn park"
+      ],
+      "lat": 39.94968,
+      "lng": -75.18648,
+      "color": "#7fb36a",
+      "kind": "lawn"
+    },
+    {
+      "name": "Pennovation Works",
+      "match": [
+        "pennovation",
+        "3401 grays ferry"
+      ],
+      "lat": 39.94182,
+      "lng": -75.19952,
+      "color": "#5f9aa0",
+      "kind": "building"
+    }
+  ],
+  "geocache": {
+    "wharton impact hub": null
+  }
+}
