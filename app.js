@@ -263,7 +263,7 @@
       return mode === "all" ? on.every(([, , test]) => test(e)) : on.some(([, , test]) => test(e));
     });
   }
-  const QUICK = ["free", "map"];          // shown outside the FILTERS button
+  const QUICK = ["map", "free"];          // shown outside the FILTERS button
   const chip = ([key, text, , tip]) => `<button class="chip" data-filter="${key}" aria-pressed="${state.filters.has(key)}"${tip ? ` title="${esc(tip)}"` : ""}>${esc(text.toUpperCase())}</button>`;
   function renderFilterPanel() {
     const all = FILTER_GROUPS.flatMap((g) => g.items);
