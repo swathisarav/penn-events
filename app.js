@@ -581,7 +581,7 @@
   // GitHub Pages can't receive form posts, so messages go through Web3Forms (free),
   // which emails them to the inbox the access key was created for. The key is safe to
   // keep in public code; the inbox address itself never appears on the site.
-  const CONTACT = { endpoint: "https://api.web3forms.com/submit", accessKey: "" };
+  const CONTACT = { endpoint: "https://api.web3forms.com/submit", accessKey: "ffc7d4e7-c11b-4328-834e-c1d06a5dda27" };
   const cdlg = $("#contact"), cform = $("#contact-form"), cstatus = $("#contact-status");
   function openContact() {
     cform.hidden = false; $("#contact-done").hidden = true; cstatus.textContent = "";
