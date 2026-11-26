@@ -571,7 +571,7 @@
         method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
           access_key: CONTACT.accessKey,
-          subject: `Penn Grad Events · ${f.get("subject")}`,
+          subject: `EventsMap: ${f.get("subject")}`,
           from_name: "Penn Grad Events site",
           message: f.get("message"),
           email: f.get("email") || "(not given)",
