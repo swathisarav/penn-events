@@ -265,7 +265,7 @@
       return mode === "all" ? on.every(([, , test]) => test(e)) : on.some(([, , test]) => test(e));
     });
   }
-  const QUICK = ["map", "free"];          // shown outside the FILTERS button
+  const QUICK = ["map", "workshop"];          // shown outside the FILTERS button
   const chip = ([key, text, , tip]) => `<button class="chip" data-filter="${key}" aria-pressed="${state.filters.has(key)}"${tip ? ` title="${esc(tip)}"` : ""}>${esc(text.toUpperCase())}</button>`;
   function renderFilterPanel() {
     const all = FILTER_GROUPS.flatMap((g) => g.items);
@@ -538,6 +538,51 @@
     if (!dlg.open) dlg.showModal();
   }
   $("#modal-close").addEventListener("click", () => $("#modal").close());
+
+  // ───────────────────────── contact form
+  // GitHub Pages can't receive form posts, so messages go through Web3Forms (free),
+  // which emails them to the site owner. Paste the access key from web3forms.com below.
+  const CONTACT = { endpoint: "https://api.web3forms.com/submit", accessKey: "" };
+  const cdlg = $("#contact"), cform = $("#contact-form"), cstatus = $("#contact-status");
+  function openContact() {
+    cform.hidden = false; $("#contact-done").hidden = true; cstatus.textContent = "";
+    cdlg.showModal();
+    cform.querySelector("[name=email]").focus();
+  }
+  $("#contact-open").addEventListener("click", openContact);
+  $("#contact-close").addEventListener("click", () => cdlg.close());
+  $("#contact-again").addEventListener("click", () => cdlg.close());
+  cdlg.addEventListener("click", (ev) => { if (ev.target === cdlg) cdlg.close(); });
+  cform.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const f = new FormData(cform);
+    if (f.get("botcheck")) return;                       // a spam bot filled the hidden field
+    if (!cform.checkValidity()) {
+      cstatus.textContent = "Please add your email and a message.";
+      cform.querySelector(":invalid")?.focus();
+      return;
+    }
+    if (!CONTACT.accessKey) { cstatus.textContent = "The contact form isn’t connected yet."; return; }
+    const btn = $("#contact-send");
+    btn.disabled = true; cstatus.textContent = "Sending…";
+    try {
+      const res = await fetch(CONTACT.endpoint, {
+        method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: CONTACT.accessKey,
+          subject: `Penn Grad Events · ${f.get("topic")}`,
+          from_name: "Penn Grad Events site",
+          name: f.get("name") || "(not given)", email: f.get("email"), replyto: f.get("email"),
+          topic: f.get("topic"), message: f.get("message"),
+        }),
+      });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok || out.success === false) throw new Error(out.message || `HTTP ${res.status}`);
+      cform.reset(); cform.hidden = true; $("#contact-done").hidden = false;
+    } catch (err) {
+      cstatus.textContent = "Couldn’t send right now — please try again in a bit.";
+    } finally { btn.disabled = false; }
+  });
   $("#modal").addEventListener("click", (ev) => { if (ev.target === ev.currentTarget) ev.currentTarget.close(); });
 
   // ───────────────────────── controls + boot
