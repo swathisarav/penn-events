@@ -142,9 +142,6 @@
     light: { anchor: "viewport", color: "#ffffff", intensity: 0.5, position: [1.4, 200, 35] },
     layers: [
       { id: "bg", type: "background", paint: { "background-color": "#fbfbfa" } },
-      { id: "park", type: "fill", source: "omt", "source-layer": "park", paint: { "fill-color": "#f2f2f0" } },
-      { id: "green", type: "fill", source: "omt", "source-layer": "landcover",
-        filter: ["in", ["get", "class"], ["literal", ["grass", "wood"]]], paint: { "fill-color": "#f2f2f0" } },
       { id: "campus", type: "fill", source: "omt", "source-layer": "landuse",
         filter: ["in", ["get", "class"], ["literal", ["university", "college"]]], paint: { "fill-color": "#f6f6f6" } },
       { id: "campus-edge", type: "line", source: "omt", "source-layer": "landuse",
@@ -155,8 +152,17 @@
         paint: { "fill-color": ["get", "color"], "fill-opacity": 0.85 } },
       { id: "lawn-hl-edge", type: "line", source: "hl", filter: ["==", ["get", "kind"], "lawn"],
         paint: { "line-color": "#000", "line-width": 1.2 } },
-      { id: "water", type: "fill", source: "omt", "source-layer": "water", paint: { "fill-color": "#eeeeee" } },
-      { id: "water-edge", type: "line", source: "omt", "source-layer": "water", paint: { "line-color": "#000", "line-width": 1.1 } },
+      // Lawns, parks and fields in a soft green (drawn above the campus tint so they show).
+      // The park layer's "historic district" covers all of campus, so only real parks/gardens count.
+      { id: "park", type: "fill", source: "omt", "source-layer": "park",
+        filter: ["in", ["get", "class"], ["literal", ["park", "garden"]]], paint: { "fill-color": "#dde8d2" } },
+      { id: "green", type: "fill", source: "omt", "source-layer": "landcover",
+        filter: ["in", ["get", "class"], ["literal", ["grass", "wood"]]], paint: { "fill-color": "#dde8d2" } },
+      { id: "fields", type: "fill", source: "omt", "source-layer": "landuse",
+        filter: ["in", ["get", "class"], ["literal", ["pitch", "playground", "garden"]]], paint: { "fill-color": "#d3e2c6" } },
+      // Schuylkill River in a muted blue.
+      { id: "water", type: "fill", source: "omt", "source-layer": "water", paint: { "fill-color": "#cfdfe9" } },
+      { id: "water-edge", type: "line", source: "omt", "source-layer": "water", paint: { "line-color": "#5f7f94", "line-width": 1.1 } },
       { id: "path", type: "line", source: "omt", "source-layer": "transportation",
         filter: ["in", ["get", "class"], ["literal", ["path", "track"]]],
         paint: { "line-color": "#8a8a8a", "line-width": ["interpolate", ["linear"], ["zoom"], 14, 0.4, 18, 1.4], "line-dasharray": [2, 2] } },
@@ -196,7 +202,7 @@
       { id: "water-label", type: "symbol", source: "omt", "source-layer": "waterway",
         layout: { "symbol-placement": "line", "text-field": ["get", "name"], "text-font": ["Noto Sans Italic"],
           "text-size": 11, "text-letter-spacing": 0.3, "text-transform": "uppercase" },
-        paint: { "text-color": "#555", "text-halo-color": "#eee", "text-halo-width": 2 } },
+        paint: { "text-color": "#4a6b80", "text-halo-color": "#cfdfe9", "text-halo-width": 2 } },
     ],
   };
 
