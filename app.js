@@ -227,14 +227,56 @@
   });
 
   // ───────────────────────── rendering
+  // Filter menu. "all" groups: an event must match every ticked item.
+  // "any" groups: an event must match at least one ticked item. Add new filters here.
+  const startMin = (e) => toMin(e.start);
+  const FILTER_GROUPS = [
+    { label: "OFFERED", mode: "all", items: [
+      ["food", "Food", (e) => !!e.food],
+      ["free", "Free", isFree, "Hides only events the sheet marks as paid"],
+      ["norsvp", "No RSVP needed", (e) => !e.registration],
+    ] },
+    { label: "WHERE", mode: "any", items: [
+      ["map", "On the map", (e) => e.places.length > 0],
+      ["virtual", "Virtual / hybrid", (e) => e.virtual],
+      ["away", "Beyond campus", (e) => !e.places.length && !e.virtual],
+    ] },
+    { label: "TYPE", mode: "any", items: [
+      ["academic", "Academic", (e) => e.category === "academic"],
+      ["career", "Career", (e) => e.category === "career"],
+      ["social", "Social", (e) => e.category === "social" || e.category === "food"],
+      ["festive", "Festive", (e) => e.category === "festive"],
+    ] },
+    { label: "WHEN", mode: "any", items: [
+      ["morning", "Morning", (e) => startMin(e) != null && startMin(e) < 720],
+      ["afternoon", "Afternoon", (e) => startMin(e) >= 720 && startMin(e) < 1020],
+      ["evening", "Evening", (e) => startMin(e) >= 1020],
+    ] },
+    { label: "STATUS", mode: "all", items: [
+      ["hideEnded", "Hide ended", (e) => status(e) !== "past"],
+    ] },
+  ];
+  function passesFilters(e) {
+    return FILTER_GROUPS.every(({ mode, items }) => {
+      const on = items.filter(([key]) => state.filters.has(key));
+      if (!on.length) return true;
+      return mode === "all" ? on.every(([, , test]) => test(e)) : on.some(([, , test]) => test(e));
+    });
+  }
+  function renderFilterPanel() {
+    $("#filter-panel").innerHTML = FILTER_GROUPS.map(({ label, items }) => `
+      <div class="fgroup"><div class="fgroup-label">${label}</div><div class="fgroup-chips">
+        ${items.map(([key, text, , tip]) => `<button class="chip" data-filter="${key}" aria-pressed="${state.filters.has(key)}"${tip ? ` title="${esc(tip)}"` : ""}>${esc(text.toUpperCase())}</button>`).join("")}
+      </div></div>`).join("");
+    const n = state.filters.size;
+    $("#filter-count").textContent = n ? ` · ${n}` : "";
+    $("#filter-toggle").classList.toggle("active", n > 0);
+    $("#filter-clear").hidden = !n;
+  }
+
   function dayEvents() {
     const evs = state.data.events.filter((e) => e.date === state.day);
-    return evs.map((e, i) => ({ ...e, idx: pad(i + 1) })).filter((e) => {
-      if (state.filters.has("map") && !e.places.length) return false;
-      if (state.filters.has("free") && !isFree(e)) return false;
-      if (state.filters.has("food") && !e.food) return false;
-      return true;
-    });
+    return evs.map((e, i) => ({ ...e, idx: pad(i + 1) })).filter(passesFilters);
   }
 
   function renderDays() {
@@ -509,12 +551,21 @@
     const cam = map.cameraForBounds(bounds, { padding: { top: 200, bottom: 160, left: 150, right: 170 }, bearing, maxZoom: 16.8 });
     if (cam) map.easeTo({ ...cam, zoom: Math.min(cam.zoom, 16.8), pitch, bearing, duration: 1400 });
   }
-  document.querySelectorAll("[data-filter]").forEach((b) => b.addEventListener("click", () => {
+  renderFilterPanel();
+  $("#filter-toggle").addEventListener("click", () => {
+    const open = $("#filter-panel").hidden;
+    $("#filter-panel").hidden = !open;
+    $("#filter-toggle").setAttribute("aria-expanded", open);
+  });
+  $("#filter-panel").addEventListener("click", (ev) => {
+    const b = ev.target.closest("[data-filter]");
+    if (!b) return;
     const f = b.dataset.filter;
     state.filters.has(f) ? state.filters.delete(f) : state.filters.add(f);
-    b.setAttribute("aria-pressed", state.filters.has(f));
+    renderFilterPanel();
     render();
-  }));
+  });
+  $("#filter-clear").addEventListener("click", () => { state.filters.clear(); renderFilterPanel(); render(); });
 
   function tickClock() {
     const t = new Date().toLocaleString("en-US", { timeZone: TZ, weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" });

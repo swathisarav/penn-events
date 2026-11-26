@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
-  <link href="style.css?v=2026-11-25h" rel="stylesheet">
+  <link href="style.css?v=2026-11-26a" rel="stylesheet">
 </head>
 <body>
   <header class="topbar">
@@ -30,11 +30,13 @@
   <main class="layout">
     <aside class="sidebar" aria-label="Event list">
       <nav class="days" id="days" aria-label="Choose a day"></nav>
-      <div class="filters" id="filters" role="group" aria-label="Filters">
-        <button class="chip" data-filter="map" aria-pressed="false">ON MAP</button>
-        <button class="chip" data-filter="free" aria-pressed="false" title="Hides only events the sheet marks as paid">FREE</button>
-        <button class="chip" data-filter="food" aria-pressed="false">FOOD</button>
+      <div class="filters" id="filters">
+        <button class="filter-toggle" id="filter-toggle" aria-expanded="false" aria-controls="filter-panel">
+          FILTERS<span id="filter-count"></span><span class="caret" aria-hidden="true">▾</span>
+        </button>
+        <button class="filter-clear" id="filter-clear" hidden>CLEAR ALL</button>
       </div>
+      <div class="filter-panel" id="filter-panel" role="group" aria-label="Filters" hidden></div>
       <div class="count" id="count"></div>
       <div class="list" id="list"></div>
       <footer class="side-foot">
@@ -76,6 +78,6 @@
   </dialog>
 
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-  <script src="app.js?v=2026-11-25h"></script>
+  <script src="app.js?v=2026-11-26a"></script>
 </body>
 </html>
