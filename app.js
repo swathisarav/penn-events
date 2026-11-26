@@ -138,6 +138,7 @@
     sources: {
       omt: { type: "vector", url: "https://tiles.openfreemap.org/planet" },
       hl: { type: "geojson", data: { type: "FeatureCollection", features: [] } },
+      pennLawns: { type: "geojson", data: { type: "FeatureCollection", features: [] } },
     },
     light: { anchor: "viewport", color: "#ffffff", intensity: 0.5, position: [1.4, 200, 35] },
     layers: [
@@ -147,19 +148,14 @@
       { id: "campus-edge", type: "line", source: "omt", "source-layer": "landuse",
         filter: ["in", ["get", "class"], ["literal", ["university", "college"]]],
         paint: { "line-color": "#000", "line-width": 1, "line-dasharray": [4, 3], "line-opacity": 0.55 } },
+      // Lawns, parks and fields that lie inside Penn's campus boundary (filled in at runtime).
+      { id: "penn-lawns", type: "fill", source: "pennLawns",
+        paint: { "fill-color": ["match", ["get", "kind"], "field", "#d3e2c6", "#dde8d2"] } },
       // Lawns / open spaces hosting events get colour.
       { id: "lawn-hl", type: "fill", source: "hl", filter: ["==", ["get", "kind"], "lawn"],
         paint: { "fill-color": ["get", "color"], "fill-opacity": 0.85 } },
       { id: "lawn-hl-edge", type: "line", source: "hl", filter: ["==", ["get", "kind"], "lawn"],
         paint: { "line-color": "#000", "line-width": 1.2 } },
-      // Lawns, parks and fields in a soft green (drawn above the campus tint so they show).
-      // The park layer's "historic district" covers all of campus, so only real parks/gardens count.
-      { id: "park", type: "fill", source: "omt", "source-layer": "park",
-        filter: ["in", ["get", "class"], ["literal", ["park", "garden"]]], paint: { "fill-color": "#dde8d2" } },
-      { id: "green", type: "fill", source: "omt", "source-layer": "landcover",
-        filter: ["in", ["get", "class"], ["literal", ["grass", "wood"]]], paint: { "fill-color": "#dde8d2" } },
-      { id: "fields", type: "fill", source: "omt", "source-layer": "landuse",
-        filter: ["in", ["get", "class"], ["literal", ["pitch", "playground", "garden"]]], paint: { "fill-color": "#d3e2c6" } },
       // Schuylkill River in a muted blue.
       { id: "water", type: "fill", source: "omt", "source-layer": "water", paint: { "fill-color": "#cfdfe9" } },
       { id: "water-edge", type: "line", source: "omt", "source-layer": "water", paint: { "line-color": "#5f7f94", "line-width": 1.1 } },
@@ -459,6 +455,42 @@
     map.getSource("hl").setData({ type: "FeatureCollection", features });
   }
   map.on("idle", applyHighlights);
+
+  // ───────────────────────── Penn's own lawns
+  // Only grass / parks / fields inside Penn's campus outline (OpenStreetMap) are tinted green.
+  const GREEN_SOURCES = [
+    ["landcover", ["grass", "wood"], "lawn"],
+    ["park", ["park", "garden"], "lawn"],
+    ["landuse", ["pitch", "playground", "garden"], "field"],
+  ];
+  let campusPolys = [];
+  const pennLawnKeys = new Set(), pennLawnFeatures = [];
+  fetch("data/penn-campus.geojson").then((r) => r.json())
+    .then((g) => { campusPolys = g.features.flatMap((f) => polygons(f.geometry)); updatePennLawns(); })
+    .catch(() => {});
+  function centre(poly) {
+    const r = poly[0]; let x = 0, y = 0;
+    for (const [lng, lat] of r) { x += lng; y += lat; }
+    return [x / r.length, y / r.length];
+  }
+  function updatePennLawns() {
+    if (!campusPolys.length || !map.isStyleLoaded() || !map.getSource("pennLawns")) return;
+    let added = false;
+    for (const [sl, classes, kind] of GREEN_SOURCES) {
+      for (const f of map.querySourceFeatures("omt", { sourceLayer: sl })) {
+        if (!classes.includes(f.properties.class)) continue;
+        for (const poly of polygons(f.geometry)) {
+          const c = centre(poly);
+          const key = `${sl}:${c[0].toFixed(6)},${c[1].toFixed(6)}`;
+          if (pennLawnKeys.has(key) || !campusPolys.some((cp) => inside(c, cp))) continue;
+          pennLawnKeys.add(key); added = true;
+          pennLawnFeatures.push({ type: "Feature", properties: { kind }, geometry: { type: "Polygon", coordinates: poly } });
+        }
+      }
+    }
+    if (added) map.getSource("pennLawns").setData({ type: "FeatureCollection", features: pennLawnFeatures });
+  }
+  map.on("idle", updatePennLawns);
   map.on("load", applyHighlights);
 
   function renderPins(evs, tick) {
