@@ -246,6 +246,8 @@
       ["career", "Career", (e) => e.category === "career"],
       ["social", "Social", (e) => e.category === "social" || e.category === "food"],
       ["festive", "Festive", (e) => e.category === "festive"],
+      ["workshop", "Workshop", (e) => /workshop|hands-on|training|bootcamp|tutorial|masterclass/i.test(`${e.title} ${e.about || ""}`),
+        "Workshops, trainings and hands-on sessions"],
     ] },
     { label: "WHEN", mode: "any", items: [
       ["morning", "Morning", (e) => startMin(e) != null && startMin(e) < 720],
