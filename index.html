@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
-  <link href="style.css?v=2026-11-26k" rel="stylesheet">
+  <link href="style.css?v=2026-11-26l" rel="stylesheet">
 </head>
 <body>
   <header class="topbar">
@@ -85,22 +85,13 @@
     <form class="contact-form" id="contact-form" novalidate>
       <div class="kicker">FORM · GET IN TOUCH</div>
       <h2 id="c-title">Contact us</h2>
-      <p class="contact-intro">Know an event we’re missing, spotted a wrong detail, or have an idea? Send a note.</p>
-      <div class="field-row">
-        <label class="field"><span>NAME <em>optional</em></span>
-          <input name="name" autocomplete="name" maxlength="100"></label>
-        <label class="field"><span>EMAIL</span>
-          <input name="email" type="email" autocomplete="email" required maxlength="200" placeholder="you@upenn.edu"></label>
-      </div>
-      <fieldset class="field topics">
-        <legend>ABOUT</legend>
-        <label><input type="radio" name="topic" value="Suggest an event" checked><span>SUGGEST AN EVENT</span></label>
-        <label><input type="radio" name="topic" value="Wrong detail"><span>WRONG DETAIL</span></label>
-        <label><input type="radio" name="topic" value="Feedback"><span>FEEDBACK</span></label>
-        <label><input type="radio" name="topic" value="Other"><span>OTHER</span></label>
-      </fieldset>
+      <p class="contact-intro">Have feedback on this website, or know of an event that’s missing? Let us know.</p>
+      <label class="field"><span>SUBJECT</span>
+        <input name="subject" required maxlength="150" placeholder="e.g. Missing event: PGWISE holiday social"></label>
       <label class="field"><span>MESSAGE</span>
-        <textarea name="message" rows="5" required maxlength="3000" placeholder="Event name, date, place, link…"></textarea></label>
+        <textarea name="message" rows="6" required maxlength="3000" placeholder="Tell us what’s missing or what could be better. For events, include the name, date, place and a link if you have one."></textarea></label>
+      <label class="field"><span>YOUR EMAIL <em>optional, if you’d like a reply</em></span>
+        <input name="email" type="email" autocomplete="email" maxlength="200" placeholder="you@upenn.edu"></label>
       <input class="hp" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="contact-foot">
         <p class="form-status" id="contact-status" role="status"></p>
@@ -117,6 +108,6 @@
   </dialog>
 
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-  <script src="app.js?v=2026-11-26k"></script>
+  <script src="app.js?v=2026-11-26l"></script>
 </body>
 </html>

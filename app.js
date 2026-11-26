@@ -541,13 +541,14 @@
 
   // ───────────────────────── contact form
   // GitHub Pages can't receive form posts, so messages go through Web3Forms (free),
-  // which emails them to the site owner. Paste the access key from web3forms.com below.
+  // which emails them to the inbox the access key was created for. The key is safe to
+  // keep in public code; the inbox address itself never appears on the site.
   const CONTACT = { endpoint: "https://api.web3forms.com/submit", accessKey: "" };
   const cdlg = $("#contact"), cform = $("#contact-form"), cstatus = $("#contact-status");
   function openContact() {
     cform.hidden = false; $("#contact-done").hidden = true; cstatus.textContent = "";
     cdlg.showModal();
-    cform.querySelector("[name=email]").focus();
+    cform.querySelector("[name=subject]").focus();
   }
   $("#contact-open").addEventListener("click", openContact);
   $("#contact-close").addEventListener("click", () => cdlg.close());
@@ -558,7 +559,7 @@
     const f = new FormData(cform);
     if (f.get("botcheck")) return;                       // a spam bot filled the hidden field
     if (!cform.checkValidity()) {
-      cstatus.textContent = "Please add your email and a message.";
+      cstatus.textContent = "Please add a subject and a message (and check your email address, if you gave one).";
       cform.querySelector(":invalid")?.focus();
       return;
     }
@@ -570,10 +571,11 @@
         method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
           access_key: CONTACT.accessKey,
-          subject: `Penn Grad Events · ${f.get("topic")}`,
+          subject: `Penn Grad Events · ${f.get("subject")}`,
           from_name: "Penn Grad Events site",
-          name: f.get("name") || "(not given)", email: f.get("email"), replyto: f.get("email"),
-          topic: f.get("topic"), message: f.get("message"),
+          message: f.get("message"),
+          email: f.get("email") || "(not given)",
+          ...(f.get("email") ? { replyto: f.get("email") } : {}),
         }),
       });
       const out = await res.json().catch(() => ({}));
