@@ -237,7 +237,7 @@
       ["norsvp", "No RSVP needed", (e) => !e.registration],
     ] },
     { label: "WHERE", mode: "any", items: [
-      ["map", "On the map", (e) => e.places.length > 0],
+      ["map", "On campus", (e) => e.places.length > 0, "Events on campus or at Pennovation"],
       ["virtual", "Virtual / hybrid", (e) => e.virtual],
       ["away", "Beyond campus", (e) => !e.places.length && !e.virtual],
     ] },
@@ -263,15 +263,20 @@
       return mode === "all" ? on.every(([, , test]) => test(e)) : on.some(([, , test]) => test(e));
     });
   }
+  const QUICK = ["free", "map"];          // shown outside the FILTERS button
+  const chip = ([key, text, , tip]) => `<button class="chip" data-filter="${key}" aria-pressed="${state.filters.has(key)}"${tip ? ` title="${esc(tip)}"` : ""}>${esc(text.toUpperCase())}</button>`;
   function renderFilterPanel() {
-    $("#filter-panel").innerHTML = FILTER_GROUPS.map(({ label, items }) => `
-      <div class="fgroup"><div class="fgroup-label">${label}</div><div class="fgroup-chips">
-        ${items.map(([key, text, , tip]) => `<button class="chip" data-filter="${key}" aria-pressed="${state.filters.has(key)}"${tip ? ` title="${esc(tip)}"` : ""}>${esc(text.toUpperCase())}</button>`).join("")}
-      </div></div>`).join("");
-    const n = state.filters.size;
+    const all = FILTER_GROUPS.flatMap((g) => g.items);
+    $("#quick-filters").innerHTML = QUICK.map((k) => chip(all.find(([key]) => key === k))).join("");
+    $("#filter-panel").innerHTML = FILTER_GROUPS.map(({ label, items }) => {
+      const rest = items.filter(([key]) => !QUICK.includes(key));
+      return rest.length ? `<div class="fgroup"><div class="fgroup-label">${label}</div>
+        <div class="fgroup-chips">${rest.map(chip).join("")}</div></div>` : "";
+    }).join("");
+    const n = [...state.filters].filter((k) => !QUICK.includes(k)).length;
     $("#filter-count").textContent = n ? ` · ${n}` : "";
     $("#filter-toggle").classList.toggle("active", n > 0);
-    $("#filter-clear").hidden = !n;
+    $("#filter-clear").hidden = !state.filters.size;
   }
 
   function dayEvents() {
@@ -557,14 +562,16 @@
     $("#filter-panel").hidden = !open;
     $("#filter-toggle").setAttribute("aria-expanded", open);
   });
-  $("#filter-panel").addEventListener("click", (ev) => {
+  const onFilterClick = (ev) => {
     const b = ev.target.closest("[data-filter]");
     if (!b) return;
     const f = b.dataset.filter;
     state.filters.has(f) ? state.filters.delete(f) : state.filters.add(f);
     renderFilterPanel();
     render();
-  });
+  };
+  $("#quick-filters").addEventListener("click", onFilterClick);
+  $("#filter-panel").addEventListener("click", onFilterClick);
   $("#filter-clear").addEventListener("click", () => { state.filters.clear(); renderFilterPanel(); render(); });
 
   function tickClock() {
