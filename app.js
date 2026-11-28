@@ -594,6 +594,70 @@
     });
   }
 
+  // ───────────────────────── add to calendar
+  // Times in the sheet are Philadelphia time. Calendar links get exact UTC times, so they land at the
+  // right moment wherever the viewer is. No start time → all-day; no end time → 1 hour (as elsewhere).
+  function etToUTC(iso, min) {
+    const [y, m, d] = iso.split("-").map(Number);
+    const guess = Date.UTC(y, m - 1, d, Math.floor(min / 60), min % 60);
+    const p = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: TZ, hourCycle: "h23",
+      year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" })
+      .formatToParts(new Date(guess)).map((x) => [x.type, x.value]));
+    const shown = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute);
+    return new Date(guess - (shown - guess));
+  }
+  const stamp = (dt) => dt.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");   // 20261201T200000Z
+  function calInfo(e) {
+    const s = toMin(e.start);
+    let end = toMin(e.end);
+    if (s != null && (end == null || end <= s)) end = s + (e.durationMin || 60);
+    const lines = [e.about, e.organiser && `Host: ${e.organiser}`, e.food && `Food: ${e.food}`,
+      safeUrl(e.link) && `${e.registration ? "Register" : "More info"}: ${safeUrl(e.link)}`,
+      s == null && e.start ? `Time: ${e.start}` : null,
+      `From Penn Grad Events: ${location.origin}${location.pathname}#${e.date}`].filter(Boolean);
+    return {
+      allDay: s == null, date: e.date,
+      start: s == null ? null : etToUTC(e.date, s), end: s == null ? null : etToUTC(e.date, end),
+      title: e.title, where: e.where && !/^not /i.test(e.where) ? e.where : "", details: lines.join("\n\n"),
+    };
+  }
+  function googleCal(c) {
+    const dates = c.allDay ? `${c.date.replace(/-/g, "")}/${addDays(c.date, 1).replace(/-/g, "")}`
+      : `${stamp(c.start)}/${stamp(c.end)}`;
+    return "https://calendar.google.com/calendar/render?" + new URLSearchParams({
+      action: "TEMPLATE", text: c.title, dates, details: c.details, location: c.where, ctz: TZ });
+  }
+  function outlookCal(c) {
+    return "https://outlook.office.com/calendar/deeplink/compose?" + new URLSearchParams({
+      path: "/calendar/action/compose", rru: "addevent", subject: c.title, body: c.details, location: c.where,
+      ...(c.allDay ? { allday: "true", startdt: c.date, enddt: addDays(c.date, 1) }
+        : { startdt: c.start.toISOString(), enddt: c.end.toISOString() }) });
+  }
+  function icsFile(e, c) {
+    const esc_ = (t) => String(t).replace(/[\\;,]/g, (m) => "\\" + m).replace(/\r?\n/g, "\\n");
+    const fold = (l) => l.match(/.{1,70}/g).join("\r\n ");
+    const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Penn Grad Events//EN", "CALSCALE:GREGORIAN",
+      "BEGIN:VEVENT", `UID:${e.id}@penn-grad-events`, `DTSTAMP:${stamp(new Date())}`,
+      ...(c.allDay ? [`DTSTART;VALUE=DATE:${c.date.replace(/-/g, "")}`, `DTEND;VALUE=DATE:${addDays(c.date, 1).replace(/-/g, "")}`]
+        : [`DTSTART:${stamp(c.start)}`, `DTEND:${stamp(c.end)}`]),
+      `SUMMARY:${esc_(c.title)}`, c.where && `LOCATION:${esc_(c.where)}`, `DESCRIPTION:${esc_(c.details)}`,
+      safeUrl(e.link) && `URL:${safeUrl(e.link)}`, "END:VEVENT", "END:VCALENDAR"].filter(Boolean);
+    return URL.createObjectURL(new Blob([lines.map(fold).join("\r\n") + "\r\n"], { type: "text/calendar" }));
+  }
+  function calMenu(e) {
+    const c = calInfo(e);
+    const file = e.title.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").slice(0, 50).toLowerCase() || "event";
+    return `<details class="cal">
+        <summary class="btn">ADD TO CALENDAR <span class="caret">▾</span></summary>
+        <div class="cal-menu">
+          <a href="${esc(googleCal(c))}" target="_blank" rel="noopener noreferrer">GOOGLE CALENDAR ↗</a>
+          <a href="${esc(outlookCal(c))}" target="_blank" rel="noopener noreferrer">OUTLOOK ↗</a>
+          <a href="${icsFile(e, c)}" download="${file}.ics">APPLE / OTHER (.ICS) ↓</a>
+          ${c.allDay ? `<p>No start time listed, so this is added as an all-day event.</p>` : ""}
+        </div>
+      </details>`;
+  }
+
   // ───────────────────────── modal
   function row(k, v) { return v ? `<tr><th>${k}</th><td>${esc(v)}</td></tr>` : ""; }
   function openEvent(e) {
@@ -621,6 +685,7 @@
       <div class="actions">
         ${link ? `<a class="btn primary" href="${esc(link)}" target="_blank" rel="noopener noreferrer">${e.registration ? "REGISTER" : "MORE INFO"} ↗</a>` : ""}
         ${e.where && !/^virtual/i.test(e.where) ? `<a class="btn" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapsQ)}" target="_blank" rel="noopener noreferrer">DIRECTIONS ↗</a>` : ""}
+        ${st !== "past" ? calMenu(e) : ""}
       </div>`;
     const dlg = $("#modal");
     if (!dlg.open) dlg.showModal();
