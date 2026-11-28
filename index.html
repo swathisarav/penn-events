@@ -5,12 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Penn Grad Events — Today on Campus</title>
   <meta name="description" content="Today's grad student events at Penn, on a 3D campus map.">
+  <script>
+    // Night mode: use the saved choice, otherwise follow the device setting. Runs before paint (no flash).
+    (function () {
+      var t = null; try { t = localStorage.getItem("theme"); } catch (e) {}
+      if (t !== "dark" && t !== "light") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = t;
+    })();
+  </script>
   <link rel="icon" href="assets/penn-shield-simple.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
-  <link href="style.css?v=2026-11-26q" rel="stylesheet">
+  <link href="style.css?v=2026-11-28a" rel="stylesheet">
   <script>
     // Google Analytics 4: visit counts only. Paste the Measurement ID (G-XXXXXXXXXX) below;
     // leave it empty to turn analytics off. Google signals and ad personalisation are disabled.
@@ -37,6 +45,10 @@
       </div>
     </div>
     <div class="topbar-right">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Switch to night mode" title="Night mode">
+        <svg class="i-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M13.5 10.2A6 6 0 0 1 5.8 2.5a6 6 0 1 0 7.7 7.7z"/></svg>
+        <svg class="i-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6 13 13M3 13l1.4-1.4M11.6 4.4 13 3"/></svg>
+      </button>
       <button class="contact-link" id="contact-open" aria-haspopup="dialog">CONTACT US</button>
       <div class="topbar-time">
         <div class="clock" id="clock">--:--</div>
@@ -114,7 +126,7 @@
       </div>
     </form>
     <div class="contact-done" id="contact-done" hidden>
-      <svg viewBox="0 0 120 90" fill="none" stroke="#000" stroke-width="1.3" aria-hidden="true">
+      <svg viewBox="0 0 120 90" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
         <rect x="15" y="20" width="90" height="56"/><path d="M15 20l45 32 45-32"/><path d="M78 8l10 10 20-20" stroke-width="2"/></svg>
       <h2>Message sent</h2>
       <p>Thanks — we’ll get back to you if you left an email.</p>
@@ -123,6 +135,6 @@
   </dialog>
 
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-  <script src="app.js?v=2026-11-26q"></script>
+  <script src="app.js?v=2026-11-28a"></script>
 </body>
 </html>

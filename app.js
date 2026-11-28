@@ -202,11 +202,61 @@
     ],
   };
 
+  // ───────────────────────── night mode
+  // Map colours per theme: [layer, paint property, day value, night value].
+  // Event buildings and lawns keep their real colours in both themes.
+  const MAP_THEME = [
+    ["bg", "background-color", "#fbfbfa", "#121316"],
+    ["campus", "fill-color", "#f6f6f6", "#17181c"],
+    ["campus-edge", "line-color", "#000", "#ecebe6"],
+    ["penn-lawns", "fill-color",
+      ["match", ["get", "kind"], "field", "#d3e2c6", "#dde8d2"],
+      ["match", ["get", "kind"], "field", "#24331f", "#1f2c1c"]],
+    ["lawn-hl-edge", "line-color", "#000", "#ecebe6"],
+    ["water", "fill-color", "#cfdfe9", "#15242f"],
+    ["water-edge", "line-color", "#5f7f94", "#5d87a3"],
+    ["path", "line-color", "#8a8a8a", "#6a6a6a"],
+    ["rail", "line-color", "#000", "#a8a8a4"],
+    ["road-casing", "line-color", "#111", "#8d8d8a"],
+    ["road", "line-color", "#ffffff", "#1d1e22"],
+    ["building-foot", "line-color", "#000", "#a8a8a4"],
+    ["building-3d", "fill-extrusion-color", "#ffffff", "#2b2d32"],
+    ["building-3d", "fill-extrusion-opacity", 0.72, 0.9],
+    ["road-label", "text-color", "#222", "#cfcfcb"],
+    ["road-label", "text-halo-color", "#fff", "#121316"],
+    ["water-label", "text-color", "#4a6b80", "#8fb4cc"],
+    ["water-label", "text-halo-color", "#cfdfe9", "#15242f"],
+  ];
+  const isDark = () => document.documentElement.dataset.theme === "dark";
+  function themeStyle(st) {                       // set the starting colours before the map draws
+    const dark = isDark();
+    for (const [id, prop, day, night] of MAP_THEME) st.layers.find((l) => l.id === id).paint[prop] = dark ? night : day;
+    st.light.intensity = dark ? 0.3 : 0.5;
+  }
+  themeStyle(style);
+  function setTheme(t, save = true) {
+    document.documentElement.dataset.theme = t;
+    if (save) try { localStorage.setItem("theme", t); } catch (e) {}
+    const dark = t === "dark", btn = $("#theme-toggle");
+    btn.setAttribute("aria-label", dark ? "Switch to day mode" : "Switch to night mode");
+    btn.title = dark ? "Day mode" : "Night mode";
+    applyMapTheme();
+  }
+  function applyMapTheme() {
+    // Paint changes work as soon as the style itself is in, even while tiles are still loading.
+    if (!map.getLayer("bg")) { map.once("styledata", applyMapTheme); return; }
+    const dark = isDark();
+    for (const [id, prop, day, night] of MAP_THEME) map.setPaintProperty(id, prop, dark ? night : day);
+    map.setLight({ ...style.light, intensity: dark ? 0.3 : 0.5 });
+  }
+  $("#theme-toggle").addEventListener("click", () => setTheme(isDark() ? "light" : "dark"));
+
   const map = new maplibregl.Map({
     container: "map", style, ...VIEWS.campus,
     maxBounds: MAX_BOUNDS, minZoom: 14.2, maxZoom: 19, maxPitch: 70,
     antialias: true, attributionControl: false,
   });
+  setTheme(document.documentElement.dataset.theme, false);   // sync the button label
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
   map.on("error", (ev) => console.error("map:", ev.error?.message || ev));
   new ResizeObserver(() => map.resize()).observe(document.getElementById("map"));
@@ -333,7 +383,7 @@
       : state.filters.size ? "Nothing matches these filters."
       : "Nothing on campus or at Pennovation — see the events further afield below.";
     return `<div class="empty">
-      <svg viewBox="0 0 120 90" fill="none" stroke="#000" stroke-width="1.3">
+      <svg viewBox="0 0 120 90" fill="none" stroke="currentColor" stroke-width="1.3">
         <path d="M10 80H110M25 80V40L60 20 95 40V80M25 40H95"/><path d="M45 80V55H75V80" stroke-dasharray="3 3"/>
         <path d="M60 20V8M54 8H66"/></svg>
       <h4>${state.day === state.today ? "QUIET DAY ON CAMPUS" : "NOTHING ON THE MAP"}</h4>

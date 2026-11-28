@@ -10,6 +10,28 @@
   --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
   --display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
   --side: 420px;
+  --on-ink-2: #ccc;                      /* secondary text on solid-ink blocks */
+  --veil: rgba(255,255,255,.85);         /* translucent paper */
+  --scrim: rgba(255,255,255,.7);
+  --hatch: rgba(0,0,0,.06);
+  --pulse: rgba(0,0,0,.5);
+  color-scheme: light;
+}
+/* ───────────── Night mode: light lines on dark paper ───────────── */
+:root[data-theme="dark"] {
+  --ink: #ecebe6;
+  --ink-2: #a6a6a2;
+  --ink-3: #6c6c69;
+  --line: #ecebe6;
+  --hair: #34353a;
+  --paper: #121316;
+  --paper-2: #1c1d21;
+  --on-ink-2: #55565a;
+  --veil: rgba(18,19,22,.85);
+  --scrim: rgba(0,0,0,.6);
+  --hatch: rgba(255,255,255,.05);
+  --pulse: rgba(236,235,230,.55);
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -46,6 +68,17 @@ h1 { font-family: var(--display); font-size: 20px; letter-spacing: .04em; margin
   font-size: 11px; font-weight: 600; letter-spacing: .14em;
 }
 .contact-link:hover { background: var(--ink); color: var(--paper); }
+.theme-toggle {
+  border: 1px solid var(--line); background: var(--paper); width: 32px; height: 30px; padding: 0;
+  display: inline-grid; place-items: center;
+}
+.theme-toggle svg { width: 15px; height: 15px; display: block; }
+.theme-toggle:hover { background: var(--ink); color: var(--paper); }
+.theme-toggle .i-sun { display: none; }
+:root[data-theme="dark"] .theme-toggle .i-sun { display: block; }
+:root[data-theme="dark"] .theme-toggle .i-moon { display: none; }
+/* Event posters stay "printed" (white) at night, just dimmed a touch. */
+:root[data-theme="dark"] .card-poster, :root[data-theme="dark"] .modal-poster { filter: brightness(.88); }
 .clock { font-family: var(--display); font-size: 20px; font-weight: 700; letter-spacing: .04em; }
 .updated { font-size: 10.5px; color: var(--ink-2); letter-spacing: .06em; }
 
@@ -77,7 +110,7 @@ h1 { font-family: var(--display); font-size: 20px; letter-spacing: .04em; margin
 .day .dnum { display: block; font-family: var(--display); font-size: 22px; font-weight: 700; line-height: 1.1; }
 .day .dcount { position: absolute; top: 8px; right: 8px; font-size: 10px; color: var(--ink-2); }
 .day[aria-selected="true"] { background: var(--ink); color: var(--paper); }
-.day[aria-selected="true"] .dname, .day[aria-selected="true"] .dcount { color: #ccc; }
+.day[aria-selected="true"] .dname, .day[aria-selected="true"] .dcount { color: var(--on-ink-2); }
 .day:hover:not([aria-selected="true"]) { background: var(--paper-2); }
 
 .days, .filters, .filter-panel, .count, .side-foot { flex-shrink: 0; }
@@ -210,6 +243,9 @@ h1 { font-family: var(--display); font-size: 20px; letter-spacing: .04em; margin
 .maplibregl-ctrl-group button + button { border-top: 1px solid var(--line) !important; }
 .maplibregl-ctrl-top-right { top: 10px; right: 10px; }
 .maplibregl-ctrl-attrib { display: none; }
+.maplibregl-ctrl-group { background: var(--paper) !important; }
+:root[data-theme="dark"] .maplibregl-ctrl-group button .maplibregl-ctrl-icon { filter: invert(1); }
+.maplibregl-popup-content { background: var(--paper); color: var(--ink); }
 
 /* Pins */
 .pin { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
@@ -224,17 +260,17 @@ h1 { font-family: var(--display); font-size: 20px; letter-spacing: .04em; margin
 .pin-stem { width: 1.5px; height: 22px; background: var(--ink); }
 .pin-dot { width: 10px; height: 10px; border: 1.5px solid var(--ink); background: var(--paper); border-radius: 50%; margin-top: -1px; }
 .pin.now .pin-label { background: var(--ink); color: var(--paper); }
-.pin.now .pin-label small { color: #ccc; }
+.pin.now .pin-label small { color: var(--on-ink-2); }
 .pin.now .pin-dot { background: var(--ink); animation: pulse 1.4s ease-out infinite; }
 .pin.past .pin-label { border-style: dashed; color: var(--ink-3); box-shadow: none; }
 .pin.past { opacity: .45; }
 .pin.past:hover { opacity: 1; }
 .pin.past .pin-stem { background: var(--ink-3); }
 .pin:hover .pin-label, .pin.hl .pin-label { transform: translate(-2px, -3px); box-shadow: 5px 6px 0 var(--ink); }
-@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0,0,0,.5); } 100% { box-shadow: 0 0 0 12px rgba(0,0,0,0); } }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 var(--pulse); } 100% { box-shadow: 0 0 0 12px rgba(0,0,0,0); } }
 
 .landmark {
-  border: 1px dashed var(--ink); background: rgba(255,255,255,.85); padding: 3px 8px;
+  border: 1px dashed var(--ink); background: var(--veil); padding: 3px 8px;
   font-size: 10px; letter-spacing: .18em; color: var(--ink-2); pointer-events: none;
 }
 
@@ -259,8 +295,8 @@ h1 { font-family: var(--display); font-size: 20px; letter-spacing: .04em; margin
 }
 .modal::backdrop {
   background:
-    repeating-linear-gradient(45deg, rgba(0,0,0,.06) 0 1px, transparent 1px 8px),
-    rgba(255,255,255,.7);
+    repeating-linear-gradient(45deg, var(--hatch) 0 1px, transparent 1px 8px),
+    var(--scrim);
   backdrop-filter: blur(2px);
 }
 .modal-close {
